@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CSH Club Match Quiz | College of Sciences & Humanities</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="description" content="Bilingual CSH Club Match Quiz — 8 quick questions to discover three student clubs that match your interests." />
+<!-- WEBSITE-READY VERSION: self-contained HTML/CSS/JavaScript; no external assets required. -->
+<style>
+  :root{
+    --navy:#0d2747;
+    --navy2:#17385f;
+    --gold:#c7a24a;
+    --cream:#fbf8f0;
+    --ink:#152033;
+    --muted:#64748b;
+    --card:#ffffff;
+    --line:#e7e9ee;
+    --soft:#f4f6f9;
+    --success:#175c4c;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at top left, rgba(199,162,74,.12), transparent 35%),
+      linear-gradient(180deg, #f7f9fc 0%, #eef2f7 100%);
+    min-height:100vh;
+  }
+  .shell{max-width:900px;margin:0 auto;padding:28px 18px 48px}
+  .card{
+    background:rgba(255,255,255,.97);
+    border:1px solid rgba(13,39,71,.09);
+    border-radius:26px;
+    box-shadow:0 18px 55px rgba(24,39,75,.11);
+    overflow:hidden;
+  }
+  .hero{
+    background:linear-gradient(135deg,var(--navy),var(--navy2));
+    color:white;padding:46px 38px 42px;position:relative;overflow:hidden
+  }
+  .hero:after{
+    content:"";position:absolute;width:260px;height:260px;border-radius:50%;
+    border:42px solid rgba(199,162,74,.12);right:-95px;top:-105px
+  }
+  .eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#f0d58d;margin-bottom:12px}
+  h1{font-size:clamp(2rem,5vw,3.65rem);line-height:1.02;margin:0 0 14px;max-width:690px}
+  .lede{font-size:1.08rem;line-height:1.6;margin:0;max-width:660px;color:#e8eef7}
+  .content{padding:34px 38px 40px}
+  .start-grid{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end;margin-top:6px}
+  label{display:block;font-weight:750;margin-bottom:8px}
+  input[type="text"]{
+    width:100%;border:1px solid #cfd6df;border-radius:14px;padding:14px 15px;
+    font-size:1rem;background:white;outline:none
+  }
+  input[type="text"]:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(199,162,74,.18)}
+  button{
+    appearance:none;border:0;border-radius:14px;padding:14px 20px;
+    font-weight:800;font-size:.98rem;cursor:pointer;transition:.18s ease
+  }
+  .primary{background:var(--gold);color:#13243a}
+  .primary:hover{transform:translateY(-1px);filter:brightness(.98)}
+  .secondary{background:#eef2f7;color:var(--navy)}
+  .secondary:hover{background:#e6ebf2}
+  .tiny{font-size:.82rem;color:var(--muted);margin-top:8px;line-height:1.45}
+  .hidden{display:none!important}
+  .progress-wrap{margin-bottom:26px}
+  .progress-row{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:9px}
+  .progress-label{font-size:.85rem;font-weight:800;color:var(--navy)}
+  .progress-track{height:8px;background:#edf0f4;border-radius:99px;overflow:hidden}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),#e1c470);width:0;transition:.3s ease}
+  .question h2{font-size:1.7rem;line-height:1.25;margin:0 0 20px;color:var(--navy)}
+  .answers{display:grid;gap:11px}
+  .answer{
+    display:flex;align-items:flex-start;gap:12px;padding:15px 16px;
+    border:1px solid #dfe4ea;border-radius:16px;background:white;cursor:pointer;
+    transition:.16s ease;text-align:left;width:100%;font-weight:650;color:var(--ink)
+  }
+  .answer:hover{border-color:#bcc8d8;background:#fbfcfe;transform:translateY(-1px)}
+  .answer.selected{border-color:var(--gold);background:#fffaf0;box-shadow:0 0 0 2px rgba(199,162,74,.13)}
+  .letter{
+    flex:0 0 29px;height:29px;border-radius:50%;display:grid;place-items:center;
+    background:#eef2f7;color:var(--navy);font-size:.8rem;font-weight:900
+  }
+  .selected .letter{background:var(--gold)}
+  .nav{display:flex;justify-content:space-between;gap:12px;margin-top:26px}
+  .multi-note{font-size:.9rem;color:var(--muted);margin:-7px 0 16px}
+  .check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .check{
+    display:flex;align-items:center;gap:10px;border:1px solid #dfe4ea;border-radius:15px;
+    padding:13px 14px;cursor:pointer;background:white;font-weight:650
+  }
+  .check input{accent-color:var(--navy);width:18px;height:18px}
+  .results-head{text-align:center;padding:4px 0 8px}
+  .results-head .spark{font-size:2rem;margin-bottom:4px}
+  .results-head h2{font-size:2rem;color:var(--navy);margin:6px 0 8px}
+  .results-head p{color:var(--muted);margin:0 auto 26px;max-width:640px;line-height:1.55}
+  .trait-strip{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:28px}
+  .pill{background:#eef3f8;color:var(--navy);border-radius:999px;padding:8px 11px;font-size:.84rem;font-weight:800}
+  .match{
+    border:1px solid var(--line);border-radius:21px;padding:22px;margin:14px 0;background:white;
+    position:relative;overflow:hidden
+  }
+  .match.top{border-color:#d8bd79;box-shadow:0 10px 25px rgba(101,80,30,.08)}
+  .rank{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;font-weight:900;color:var(--gold);margin-bottom:5px}
+  .match-row{display:flex;justify-content:space-between;align-items:start;gap:16px}
+  .match h3{font-size:1.45rem;color:var(--navy);margin:0}
+  .pct{
+    min-width:70px;text-align:center;border-radius:999px;background:var(--navy);color:white;
+    padding:8px 11px;font-weight:900;font-size:.9rem
+  }
+  .why{line-height:1.6;margin:13px 0;color:#344054}
+  .tags{display:flex;gap:7px;flex-wrap:wrap;margin:13px 0 16px}
+  .tag{background:#f5f6f8;border-radius:999px;padding:6px 9px;font-size:.79rem;color:#536175;font-weight:700}
+  .club-link{display:inline-block;text-decoration:none;color:var(--navy);font-weight:850;border-bottom:2px solid var(--gold);padding-bottom:2px}
+  .footer-callout{
+    margin-top:26px;background:var(--cream);border:1px solid #eadcb8;border-radius:20px;padding:20px;
+    text-align:center;line-height:1.55
+  }
+  .footer-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .disclaimer{font-size:.76rem;color:#7b8798;margin-top:22px;line-height:1.5;text-align:center}
+  .creator-credit{
+    margin:16px auto 0;text-align:center;font-size:.72rem;line-height:1.5;
+    color:#8a94a3;letter-spacing:.01em
+  }
+  .creator-credit a{color:inherit;text-decoration:none;border-bottom:1px solid #c8ced6}
+  .creator-credit a:hover{color:var(--navy);border-bottom-color:var(--gold)}
+  @media(max-width:620px){
+    .shell{padding:12px 10px 30px}
+    .hero{padding:35px 23px}
+    .content{padding:26px 20px 30px}
+    .start-grid{grid-template-columns:1fr}
+    .check-grid{grid-template-columns:1fr}
+    .match-row{align-items:center}
+    .question h2{font-size:1.42rem}
+  }
+
+  .lang-switch{display:flex;justify-content:flex-end;gap:8px;margin:0 0 14px}
+  .lang-btn{border:1px solid var(--line);background:white;color:var(--navy);border-radius:999px;padding:8px 14px;font-weight:850;cursor:pointer}
+  .lang-btn.active{background:var(--navy);color:white;border-color:var(--navy)}
+  body.rtl{direction:rtl;font-family:'Cairo','Somar Sans','Noto Sans Arabic',Tahoma,Arial,sans-serif}
+  body.rtl .results-head, body.rtl .footer-callout, body.rtl .disclaimer{text-align:center}
+  body.rtl .hero, body.rtl .content, body.rtl .question, body.rtl .match{text-align:right}
+  body.rtl .answer{text-align:right}
+  body.rtl .letter{margin-left:10px;margin-right:0}
+  body.rtl .match-row{direction:rtl}
+  body.rtl .tags, body.rtl .trait-strip{direction:rtl}
+
+
+  html[dir="rtl"] body,
+  html[dir="rtl"] button,
+  html[dir="rtl"] input,
+  html[dir="rtl"] label,
+  html[dir="rtl"] .card,
+  html[dir="rtl"] .creator-credit{
+    font-family:'Cairo','Somar Sans','Noto Sans Arabic',Tahoma,Arial,sans-serif !important;
+  }
+
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="lang-switch">
+    <button id="enBtn" class="lang-btn active" onclick="setLanguage('en')">English</button>
+    <button id="arBtn" class="lang-btn" onclick="setLanguage('ar')">العربية</button>
+  </div>
+  <main class="card">
+    <section id="intro">
+      <div class="hero">
+        <div class="eyebrow">Find your people. Try something new.</div>
+        <h1>Find Your CSH Club Match</h1>
+        <p class="lede">12 clubs. 8 quick questions. Tell us what you're into and we'll reveal the three CSH clubs that best match your interests, goals, and campus vibe.</p>
+      </div>
+      <div class="content">
+        <div class="start-grid">
+          <div>
+            <label for="name">First name <span style="font-weight:500;color:#778395">(optional)</span></label>
+            <input id="name" type="text" maxlength="30" placeholder="We'll personalize your results" />
+            <div class="tiny">No login. No grades. No right answers. Just a quick way to discover clubs you might enjoy.</div>
+          </div>
+          <button class="primary" onclick="startQuiz()">Find my clubs →</button>
+        </div>
+        <div id="introCredit" class="creator-credit">
+          Quiz created by Ms. Maram Alkhodair · <a href="mailto:mkhodair@psu.edu.sa">mkhodair@psu.edu.sa</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="quiz" class="content hidden">
+      <div class="progress-wrap">
+        <div class="progress-row">
+          <div id="progressText" class="progress-label">Question 1 of 8</div>
+          <div id="progressPct" class="progress-label">12%</div>
+        </div>
+        <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+      </div>
+      <div id="questionArea"></div>
+    </section>
+
+    <section id="extras" class="content hidden">
+      <div class="progress-wrap">
+        <div class="progress-row"><div class="progress-label">Almost there</div><div class="progress-label">Bonus</div></div>
+        <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+      </div>
+      <div class="question">
+        <h2>Anything you'd especially like your club to include?</h2>
+        <p class="multi-note">Choose as many as you like. This gives your results a small final nudge.</p>
+        <div class="check-grid" id="bonusChecks"></div>
+        <div class="nav">
+          <button class="secondary" onclick="backToLast()">← Back</button>
+          <button class="primary" onclick="showResults()">Reveal my matches ✨</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="results" class="content hidden">
+      <div id="resultsArea"></div>
+    </section>
+  </main>
+</div>
+
+<script>
+const MAIN_CLUBS_URL = "https://psu.edu.sa/en/CSH/student-clubs";
+let lang = "en";
+
+const ui = {
+ en:{
+  eyebrow:"Find your people. Try something new.",
+  title:"Find Your CSH Club Match",
+  lede:"12 clubs. 8 quick questions. Tell us what you're into and we'll reveal the three CSH clubs that best match your interests, goals, and campus vibe.",
+  first:"First name", optional:"(optional)", placeholder:"We'll personalize your results",
+  tiny:"No login. No grades. No right answers. Just a quick way to discover clubs you might enjoy.",
+  start:"Find my clubs →", q:"Question", of:"of", almost:"Almost there", bonus:"Bonus",
+  bonusQ:"Anything you'd especially like your club to include?",
+  bonusNote:"Choose as many as you like. This gives your results a small final nudge.",
+  back:"← Back", next:"Next →", reveal:"Reveal my matches ✨",
+  found:"We found your matches!", foundName:n=>`${n}, we found your matches!`,
+  resultIntro:"Your answers point to a mix of interests and goals — so we're giving you three clubs to explore, not putting you in one box.",
+  medals:["Your #1 match","Also a great fit","You might also enjoy"],
+  match:"match", explore:"Explore CSH student clubs →",
+  surprised:"Surprised by your matches? Good. 👀",
+  footer:"Your best club isn't necessarily the one connected to your major. Try an event, meet the members, and see whether we got it right.",
+  all:"Explore all 12 clubs", retake:"Retake the quiz",
+  disclaimer:"Match percentages are playful compatibility scores based on your quiz answers, not scientific probabilities."
+ },
+ ar:{
+  eyebrow:"اكتشف مجتمعك. وجرّب شيئًا جديدًا.",
+  title:"اكتشف النادي الأنسب لك في CSH",
+  lede:"12 ناديًا، و8 أسئلة سريعة. أخبرنا عن اهتماماتك وأهدافك لنقترح لك أفضل ثلاثة أندية تناسبك.",
+  first:"الاسم الأول", optional:"(اختياري)", placeholder:"سنستخدمه لتخصيص نتيجتك",
+  tiny:"لا يوجد تسجيل دخول أو إجابات صحيحة وخاطئة. إنها طريقة سريعة لاكتشاف الأندية التي قد تناسب اهتماماتك.",
+  start:"اكتشف أنديتي ←", q:"السؤال", of:"من", almost:"بقي القليل", bonus:"إضافي",
+  bonusQ:"هل هناك شيء تود أن يتضمنه النادي بشكل خاص؟",
+  bonusNote:"يمكنك اختيار أكثر من إجابة. ستساعدنا اختياراتك في تحسين النتيجة قليلًا.",
+  back:"رجوع →", next:"← التالي", reveal:"أظهر النتائج ✨",
+  found:"وجدنا الأندية الأنسب لك!", foundName:n=>`${n}، وجدنا الأندية الأنسب لك!`,
+  resultIntro:"تعكس إجاباتك مجموعة من الاهتمامات والأهداف، لذلك سنقترح عليك ثلاثة أندية لاستكشافها بدلًا من حصر اهتماماتك في خيار واحد.",
+  medals:["الخيار الأقرب لك","خيار مناسب أيضًا","قد تستمتع أيضًا بـ"],
+  match:"توافق", explore:"استكشف أندية CSH ←",
+  surprised:"هل فاجأتك النتائج؟ ممتاز. 👀",
+  footer:"ليس بالضرورة أن يكون النادي الأنسب لك مرتبطًا بتخصصك. احضر فعالية، تعرّف على الأعضاء، واكتشف بنفسك مدى ملاءمته لك.",
+  all:"استكشف الأندية الـ12", retake:"أعد الاختبار",
+  disclaimer:"نِسَب التوافق تقديرية ومرحة مبنية على إجاباتك في الاختبار، وليست نسبًا علمية."
+ }
+};
+
+const traits = {
+ creative:{en:"Creative expression",ar:"التعبير الإبداعي"},
+ communication:{en:"Communication",ar:"التواصل"},
+ publicSpeaking:{en:"Public speaking",ar:"التحدث أمام الجمهور"},
+ leadership:{en:"Leadership",ar:"القيادة"},
+ career:{en:"Career development",ar:"التطوير المهني"},
+ language:{en:"Language",ar:"اللغة"},
+ culture:{en:"Culture",ar:"الثقافة"},
+ critical:{en:"Critical thinking",ar:"التفكير النقدي"},
+ stem:{en:"STEM curiosity",ar:"العلوم والرياضيات"},
+ data:{en:"Data & analytics",ar:"البيانات والتحليل"},
+ digital:{en:"Digital & technology",ar:"التقنية والرقمنة"},
+ service:{en:"Service",ar:"خدمة المجتمع"},
+ environment:{en:"Environment",ar:"البيئة"},
+ wellbeing:{en:"Wellbeing",ar:"الصحة والرفاه"},
+ community:{en:"Community",ar:"المجتمع"},
+ curiosity:{en:"Curiosity",ar:"الفضول"},
+ resilience:{en:"Personal growth",ar:"التطور الشخصي"}
+};
+
+const questions = [
+ {en:"You've got two unexpected free hours on campus. Where are we most likely to find you?",
+  ar:"لديك ساعتان فارغتان بشكل مفاجئ في الجامعة. أين يُرجّح أن نجدك؟",
+  a:[
+   ["Somewhere cozy, reading, writing, or creating something","في مكان هادئ أقرأ أو أكتب أو أعمل على شيء إبداعي",{creative:3,language:1,curiosity:1}],
+   ["Talking with friends about absolutely everything","أتحدث مع الأصدقاء عن كل شيء تقريبًا",{communication:2,community:3,culture:1}],
+   ["At an event, meeting people and getting involved","في فعالية أتعرف على أشخاص جدد وأشارك",{community:3,leadership:1,service:1}],
+   ["Learning something useful just because I'm curious","أتعلم شيئًا مفيدًا لمجرد أنني فضولي",{curiosity:4,stem:1,critical:1}],
+   ["Probably on my laptop exploring something interesting","غالبًا على جهازي أستكشف موضوعًا أو أداة تثير اهتمامي",{digital:3,data:1,curiosity:2}]
+  ]},
+ {en:"Pick something you'd genuinely love to get better at.",ar:"اختر مهارة تود فعلًا أن تتطور فيها.",
+  a:[
+   ["Speaking confidently in front of people","التحدث بثقة أمام الآخرين",{publicSpeaking:4,communication:2,resilience:1}],
+   ["Writing or expressing my ideas creatively","الكتابة أو التعبير عن أفكاري بطريقة إبداعية",{creative:4,language:2}],
+   ["Leadership and professional skills","القيادة والمهارات المهنية",{leadership:3,career:4}],
+   ["Understanding people and cultures","فهم الناس والثقافات المختلفة",{culture:4,communication:1,community:1}],
+   ["Solving problems and working with information","حل المشكلات والعمل مع المعلومات والبيانات",{data:3,critical:3,stem:2}],
+   ["Taking better care of myself and others","الاهتمام بصحتي ورفاهي ودعم الآخرين",{wellbeing:4,service:2}],
+   ["Making a meaningful difference in my community","إحداث أثر إيجابي في مجتمعي",{service:4,community:2,leadership:1}]
+  ]},
+ {en:"You're helping with a big campus event. Which job are you claiming?",ar:"تشارك في تنظيم فعالية جامعية كبيرة. أي مهمة ستختار؟",
+  a:[
+   ["Writing the captions, script, or promotional content","كتابة النصوص أو المحتوى الترويجي",{language:3,creative:3,communication:1}],
+   ["Hosting — give me the microphone!","التقديم — أعطني الميكروفون!",{publicSpeaking:4,communication:3,leadership:1}],
+   ["Coming up with the creative concept","ابتكار الفكرة الإبداعية للفعالية",{creative:4,digital:1,curiosity:1}],
+   ["Organizing everyone and making sure it actually happens","تنظيم الفريق والتأكد من تنفيذ كل شيء",{leadership:4,career:2,community:1}],
+   ["Researching the topic and checking the details","البحث في الموضوع والتأكد من التفاصيل",{critical:3,data:2,curiosity:2}],
+   ["Welcoming people and making everyone feel included","استقبال الحضور وجعل الجميع يشعر بالترحيب",{community:4,culture:2,communication:1}]
+  ]},
+ {en:"Which event would make you stop scrolling and actually register?",ar:"أي فعالية ستجعلك تتوقف عن التصفح وتسجل فعلًا؟",
+  a:[
+   ["A debate about a controversial question","مناظرة حول قضية مثيرة للنقاش",{critical:4,publicSpeaking:3,communication:1}],
+   ["A cultural night with languages, traditions, and food","ليلة ثقافية تتضمن لغات وثقافات وتجارب متنوعة",{culture:4,language:2,community:2}],
+   ["A creative workshop or book/storytelling event","ورشة إبداعية أو فعالية للكتب والقصص",{creative:4,language:2,community:1}],
+   ["A workshop about AI, data, or emerging technology","ورشة عن الذكاء الاصطناعي أو البيانات أو التقنيات الحديثة",{digital:4,data:4,career:1}],
+   ["A career or leadership workshop","ورشة عن التطوير المهني أو القيادة",{career:4,leadership:3}],
+   ["A health, wellbeing, or community initiative","مبادرة للصحة أو الرفاه أو خدمة المجتمع",{wellbeing:3,service:3,community:1}],
+   ["A science or problem-solving challenge","تحدٍ علمي أو نشاط لحل المشكلات",{stem:4,critical:3,curiosity:1}],
+   ["An environmental or sustainability initiative","مبادرة بيئية أو للاستدامة",{environment:5,service:2,community:1}]
+  ]},
+ {en:"Your friends would probably describe you as...",ar:"غالبًا سيصفك أصدقاؤك بأنك...",
+  a:[
+   ["Creative — I always have ideas","مبدع — لدي دائمًا أفكار جديدة",{creative:4,curiosity:1}],
+   ["Curious — I ask a LOT of questions","فضولي — أطرح الكثير من الأسئلة",{curiosity:4,critical:1}],
+   ["Social — I genuinely enjoy meeting people","اجتماعي — أستمتع فعلًا بالتعرف على الناس",{community:4,communication:2}],
+   ["Analytical — I like figuring things out","تحليلي — أحب فهم الأمور وحلها",{data:3,critical:4,stem:1}],
+   ["Driven — I like setting goals and achieving them","طموح — أحب وضع الأهداف وتحقيقها",{career:2,leadership:2,resilience:3}],
+   ["Compassionate — I care about people and causes","مهتم بالآخرين — تهمني الناس والقضايا المجتمعية",{service:4,wellbeing:1,community:2}],
+   ["Quiet at first — but I want to come out of my shell","هادئ في البداية — لكنني أريد أن أصبح أكثر ثقة",{publicSpeaking:3,communication:2,resilience:3}]
+  ]},
+ {en:"Which rabbit hole could you most easily fall into?",ar:"أي موضوع يمكن أن يجعلك تستغرق في القراءة أو الاستكشاف دون أن تشعر بالوقت؟",
+  a:[
+   ["Books, stories, writing, or creative ideas","الكتب والقصص والكتابة والأفكار الإبداعية",{creative:4,language:2}],
+   ["Languages, words, translation, or how people communicate","اللغات والكلمات والترجمة وكيفية التواصل",{language:4,communication:2}],
+   ["Other cultures and how people live around the world","الثقافات المختلفة وكيف يعيش الناس حول العالم",{culture:5,community:1}],
+   ["Numbers, patterns, data, or figuring out why something happened","الأرقام والأنماط والبيانات وتحليل أسباب الأشياء",{data:4,stem:3,critical:2}],
+   ["Science, nature, or how the world works","العلوم والطبيعة وكيف يعمل العالم",{stem:4,environment:2,curiosity:2}],
+   ["Technology, AI, digital culture, or social media","التقنية والذكاء الاصطناعي والثقافة الرقمية ووسائل التواصل",{digital:5,data:2,creative:1}],
+   ["Health, psychology, self-care, or wellbeing","الصحة وعلم النفس والعناية بالذات والرفاه",{wellbeing:5,service:1}],
+   ["Social issues, volunteering, sustainability, or community action","القضايا المجتمعية والتطوع والاستدامة والعمل المجتمعي",{service:4,community:2,environment:2}]
+  ]},
+ {en:"Be honest: what's your MAIN reason for joining a club?",ar:"بصراحة، ما السبب الرئيسي الذي يدفعك للانضمام إلى نادٍ؟",
+  a:[
+   ["I want to make friends and find my people.","أريد تكوين صداقات والعثور على أشخاص يشاركونني اهتماماتي",{community:5,culture:1}],
+   ["I want something fun and interesting to do between classes.","أريد نشاطًا ممتعًا ومثيرًا للاهتمام بين المحاضرات",{community:2,creative:1,curiosity:2}],
+   ["I want experience that will help my future career.","أريد خبرات تساعدني في مستقبلي المهني",{career:5,leadership:2,data:1}],
+   ["I want to build my confidence.","أريد تعزيز ثقتي بنفسي",{resilience:4,publicSpeaking:3,communication:1}],
+   ["I want somewhere to express myself.","أريد مساحة أعبّر فيها عن نفسي",{creative:5,language:2}],
+   ["I want to learn things I wouldn't normally encounter in class.","أريد تعلم أشياء لا أتعرض لها عادةً في المحاضرات",{curiosity:5,digital:1,stem:1,culture:1}],
+   ["I want to contribute to something meaningful.","أريد المساهمة في شيء له معنى وأثر",{service:5,community:2,environment:1}],
+   ["I don't know yet — that's why I'm taking this quiz!","لا أعرف بعد — ولهذا أجري هذا الاختبار!",{curiosity:2,community:2,resilience:1}]
+  ]},
+ {en:"Last one. Pick the university experience you want to look back on.",ar:"السؤال الأخير. أي تجربة جامعية تتمنى أن تتذكرها لاحقًا؟",
+  a:[
+   ["I found my voice.","وجدت صوتي وأصبحت أكثر ثقة في التعبير",{publicSpeaking:4,communication:3,resilience:1}],
+   ["I found my people.","وجدت مجتمعي والأشخاص الذين أنتمي إليهم",{community:5,culture:1}],
+   ["I discovered something I became passionate about.","اكتشفت اهتمامًا جديدًا أصبح شغفًا بالنسبة لي",{curiosity:5,resilience:1}],
+   ["I created things I was proud of.","أنجزت أعمالًا إبداعية أفتخر بها",{creative:5,leadership:1}],
+   ["I challenged myself.","تحديت نفسي وتطورت",{resilience:5,critical:1,leadership:1}],
+   ["I made a difference.","أحدثت فرقًا وأثرًا إيجابيًا",{service:5,community:1}],
+   ["I prepared myself for what comes next.","استعددت لما بعد الجامعة",{career:5,leadership:2}],
+   ["I tried things I never thought I'd try.","جربت أشياء لم أتوقع أن أجربها",{curiosity:3,resilience:3,community:1}]
+  ]}
+];
+
+const bonusOptions = [
+ ["Meeting new people","التعرف على أشخاص جدد",{community:2}],
+ ["Competitions and challenges","المسابقات والتحديات",{critical:1,publicSpeaking:1,stem:1}],
+ ["Volunteering","التطوع",{service:2}],
+ ["Workshops","ورش العمل",{career:1,curiosity:1}],
+ ["Creative projects","المشاريع الإبداعية",{creative:2}],
+ ["Speaking / presenting","التحدث / التقديم",{publicSpeaking:2,communication:1}],
+ ["Career development","التطوير المهني",{career:2}],
+ ["Technology / hands-on projects","التقنية / المشاريع التطبيقية",{digital:2,data:1,stem:1}],
+ ["No preference — surprise me!","لا يوجد تفضيل — فاجئني!",{curiosity:1}]
+];
+
+const clubs = [
+ {en:"Media Club",ar:"نادي الإعلام",profile:{creative:5,communication:5,digital:4,community:3,career:2},
+  descEn:"A creative space for students interested in media, communication, and digital content, including design, journalism, social media, podcasting, and content creation.",
+  descAr:"مساحة إبداعية للطلبة المهتمين بالإعلام والاتصال والمحتوى الرقمي، بما في ذلك التصميم والصحافة ووسائل التواصل والبودكاست وصناعة المحتوى.",
+  tagsEn:["Media","Content creation","Communication"],tagsAr:["الإعلام","صناعة المحتوى","التواصل"]},
+ {en:"Data Hub Club",ar:"نادي داتا هب",profile:{data:5,digital:4,critical:4,career:3,stem:3,curiosity:3},
+  descEn:"For students who want to explore data analysis, practical projects, analytics tools, and evidence-based problem solving.",
+  descAr:"للطلبة الراغبين في استكشاف تحليل البيانات والمشاريع التطبيقية وأدوات التحليل وحل المشكلات بالاعتماد على الأدلة.",
+  tagsEn:["Data","Analytics","Technology"],tagsAr:["البيانات","التحليل","التقنية"]},
+ {en:"Math Club",ar:"نادي الرياضيات",profile:{stem:5,critical:5,data:3,curiosity:4},
+  descEn:"For students who enjoy mathematics, patterns, logical thinking, problem-solving, and exploring the practical side of math.",
+  descAr:"للطلبة الذين يستمتعون بالرياضيات والأنماط والتفكير المنطقي وحل المشكلات واستكشاف الجانب التطبيقي للرياضيات.",
+  tagsEn:["Mathematics","Logic","Problem-solving"],tagsAr:["الرياضيات","المنطق","حل المشكلات"]},
+ {en:"Ink & Ideas Club",ar:"نادي حبر وفكرة",profile:{creative:5,language:4,community:3,curiosity:3,culture:2},
+  descEn:"A student-led creative community for students who enjoy reading, writing, discussion, creative expression, and exchanging ideas.",
+  descAr:"مجتمع طلابي إبداعي للمهتمين بالقراءة والكتابة والنقاش والتعبير الإبداعي وتبادل الأفكار.",
+  tagsEn:["Writing","Creativity","Reading & ideas"],tagsAr:["الكتابة","الإبداع","القراءة والأفكار"]},
+ {en:"Science Club",ar:"نادي العلوم",profile:{stem:5,curiosity:5,critical:3,digital:2,community:2},
+  descEn:"A good fit for curious students who want to explore science and technology beyond the classroom through activities and practical learning.",
+  descAr:"مناسب للطلبة الفضوليين الراغبين في استكشاف العلوم والتكنولوجيا خارج القاعة الدراسية من خلال الأنشطة والتعلم التطبيقي.",
+  tagsEn:["Science","Discovery","Curiosity"],tagsAr:["العلوم","الاستكشاف","الفضول"]},
+ {en:"Environmental Club",ar:"النادي البيئي",profile:{environment:5,service:4,community:3,stem:2,curiosity:2},
+  descEn:"For students who care about environmental awareness, sustainability, responsible choices, and positive community action.",
+  descAr:"للطلبة المهتمين بالوعي البيئي والاستدامة والخيارات المسؤولة والعمل الإيجابي داخل المجتمع.",
+  tagsEn:["Environment","Sustainability","Community action"],tagsAr:["البيئة","الاستدامة","العمل المجتمعي"]},
+ {en:"Digital Literary Club",ar:"نادي الأدب الرقمي",profile:{digital:5,creative:4,critical:4,language:2,curiosity:4,culture:2},
+  descEn:"For students interested in the intersection of the humanities and technology, including digital culture, AI, inclusion, and critical inquiry.",
+  descAr:"للطلبة المهتمين بالتقاطع بين العلوم الإنسانية والتكنولوجيا، بما في ذلك الثقافة الرقمية والذكاء الاصطناعي والتفكير النقدي.",
+  tagsEn:["Digital humanities","Technology","Critical inquiry"],tagsAr:["الإنسانيات الرقمية","التقنية","التفكير النقدي"]},
+ {en:"Student Empowerment Club",ar:"نادي تمكين الطلبة",profile:{career:5,leadership:4,communication:3,resilience:3,community:2},
+  descEn:"A practical match for students who want to connect university learning with workplace, communication, leadership, and transferable skills.",
+  descAr:"مناسب للطلبة الراغبين في ربط التعلم الجامعي بمهارات سوق العمل والتواصل والقيادة والمهارات القابلة للتطبيق في مجالات متعددة.",
+  tagsEn:["Career skills","Leadership","Professional growth"],tagsAr:["المهارات المهنية","القيادة","التطور المهني"]},
+ {en:"Translator Club",ar:"نادي الترجمة",profile:{language:5,culture:4,communication:3,career:3,creative:2},
+  descEn:"For students interested in language, culture, language learning, and exploring ideas connected to applied linguistics and language studies.",
+  descAr:"للطلبة المهتمين باللغة والثقافة وتعلم اللغات واستكشاف الأفكار المرتبطة باللغويات التطبيقية ودراسات اللغة.",
+  tagsEn:["Language","Culture","Applied linguistics"],tagsAr:["اللغة","الثقافة","اللغويات التطبيقية"]},
+ {en:"Health & Wellbeing Club",ar:"نادي الصحة والرفاه",profile:{wellbeing:5,service:4,community:3,resilience:3},
+  descEn:"For students interested in physical, mental, and emotional wellbeing, healthy habits, self-care, balance, and supporting a positive student community.",
+  descAr:"للطلبة المهتمين بالصحة الجسدية والنفسية والعاطفية والعادات الصحية والعناية بالذات وتحقيق التوازن ودعم مجتمع طلابي إيجابي.",
+  tagsEn:["Wellbeing","Healthy habits","Community"],tagsAr:["الصحة والرفاه","العادات الصحية","المجتمع"]},
+ {en:"Debate Society",ar:"جمعية المناظرة",profile:{critical:5,publicSpeaking:5,communication:4,leadership:3,curiosity:3,resilience:2},
+  descEn:"A match for students who enjoy exchanging ideas, evaluating different perspectives, building persuasive arguments, and developing confidence through debate.",
+  descAr:"مناسب للطلبة الذين يستمتعون بتبادل الأفكار وتقييم وجهات النظر المختلفة وبناء الحجج المقنعة وتنمية الثقة من خلال المناظرات.",
+  tagsEn:["Debate","Critical thinking","Argumentation"],tagsAr:["المناظرات","التفكير النقدي","بناء الحجج"]},
+ {en:"Toastmasters International",ar:"نادي توستماسترز العالمي",profile:{publicSpeaking:5,communication:5,leadership:4,resilience:3,career:2},
+  descEn:"A strong match for students who want to strengthen public speaking, communication, confidence, and leadership through regular practice.",
+  descAr:"مناسب للطلبة الراغبين في تنمية مهارات التحدث أمام الجمهور والتواصل والثقة والقيادة من خلال الممارسة المنتظمة.",
+  tagsEn:["Public speaking","Confidence","Leadership"],tagsAr:["التحدث أمام الجمهور","الثقة","القيادة"]}
+];
+
+let current=0;
+let answers=new Array(questions.length).fill(null);
+let baseScores={}, bonusScores={};
+
+function setLanguage(l){
+ lang=l;
+ document.documentElement.lang=l;
+ document.documentElement.dir=l==="ar"?"rtl":"ltr";
+ document.body.classList.toggle("rtl",l==="ar");
+ document.getElementById("enBtn").classList.toggle("active",l==="en");
+ document.getElementById("arBtn").classList.toggle("active",l==="ar");
+ const introCredit=document.getElementById("introCredit");
+ if(introCredit){
+   introCredit.innerHTML=l==="ar"
+     ? 'إعداد وتصميم الاختبار: أ. مرام الخضير · <a href="mailto:mkhodair@psu.edu.sa">mkhodair@psu.edu.sa</a>'
+     : 'Quiz created by Ms. Maram Alkhodair · <a href="mailto:mkhodair@psu.edu.sa">mkhodair@psu.edu.sa</a>';
+ }
+ renderIntro();
+ if(!document.getElementById("quiz").classList.contains("hidden")) renderQuestion();
+ if(!document.getElementById("extras").classList.contains("hidden")) renderBonus();
+ if(!document.getElementById("results").classList.contains("hidden")) showResults();
+}
+
+function renderIntro(){
+ const t=ui[lang];
+ document.querySelector("#intro .eyebrow").textContent=t.eyebrow;
+ document.querySelector("#intro h1").textContent=t.title;
+ document.querySelector("#intro .lede").textContent=t.lede;
+ const label=document.querySelector('label[for="name"]');
+ label.innerHTML=`${t.first} <span style="font-weight:500;color:#778395">${t.optional}</span>`;
+ document.getElementById("name").placeholder=t.placeholder;
+ document.querySelector("#intro .tiny").textContent=t.tiny;
+ document.querySelector("#intro .primary").textContent=t.start;
+}
+
+function startQuiz(){
+ current=0;
+ document.getElementById("intro").classList.add("hidden");
+ document.getElementById("quiz").classList.remove("hidden");
+ renderQuestion();
+}
+
+function renderQuestion(){
+ const item=questions[current], t=ui[lang], area=document.getElementById("questionArea"), letters="ABCDEFGH";
+ area.innerHTML=`<div class="question"><h2>${item[lang]}</h2><div class="answers">
+ ${item.a.map((x,i)=>`<button class="answer ${answers[current]===i?"selected":""}" onclick="selectAnswer(${i})"><span class="letter">${letters[i]}</span><span>${x[lang==="en"?0:1]}</span></button>`).join("")}
+ </div><div class="nav"><button class="secondary ${current===0?"hidden":""}" onclick="prevQ()">${t.back}</button>
+ <button class="primary" ${answers[current]===null?'disabled style="opacity:.45;cursor:not-allowed"':''} onclick="nextQ()">${t.next}</button></div></div>`;
+ const pct=Math.round(((current+1)/questions.length)*100);
+ document.getElementById("progressText").textContent=`${t.q} ${current+1} ${t.of} ${questions.length}`;
+ document.getElementById("progressPct").textContent=`${pct}%`;
+ document.getElementById("progressFill").style.width=`${pct}%`;
+}
+function selectAnswer(i){answers[current]=i;renderQuestion();}
+function prevQ(){if(current>0){current--;renderQuestion();}}
+function nextQ(){if(answers[current]===null)return;if(current<questions.length-1){current++;renderQuestion();}else showBonus();}
+
+function showBonus(){
+ document.getElementById("quiz").classList.add("hidden");
+ document.getElementById("extras").classList.remove("hidden");
+ renderBonus();
+}
+function renderBonus(){
+ const t=ui[lang];
+ document.querySelector("#extras .progress-row").innerHTML=`<div class="progress-label">${t.almost}</div><div class="progress-label">${t.bonus}</div>`;
+ document.querySelector("#extras h2").textContent=t.bonusQ;
+ document.querySelector("#extras .multi-note").textContent=t.bonusNote;
+ document.getElementById("bonusChecks").innerHTML=bonusOptions.map((x,i)=>`<label class="check"><input type="checkbox" data-i="${i}" onchange="bonusChanged(this)"><span>${x[lang==="en"?0:1]}</span></label>`).join("");
+ document.querySelector("#extras .nav").innerHTML=`<button class="secondary" onclick="backToLast()">${t.back}</button><button class="primary" onclick="showResults()">${t.reveal}</button>`;
+}
+function backToLast(){document.getElementById("extras").classList.add("hidden");document.getElementById("quiz").classList.remove("hidden");current=questions.length-1;renderQuestion();}
+function bonusChanged(el){
+ const i=+el.dataset.i, boxes=[...document.querySelectorAll('#bonusChecks input')];
+ if(i===bonusOptions.length-1&&el.checked) boxes.forEach(b=>{if(+b.dataset.i!==i)b.checked=false;});
+ else if(el.checked) boxes[bonusOptions.length-1].checked=false;
+}
+function addTo(obj,weights,factor=1){for(const[k,v]of Object.entries(weights))obj[k]=(obj[k]||0)+(v*factor);}
+function computeScores(){
+ baseScores={}; answers.forEach((idx,qi)=>addTo(baseScores,questions[qi].a[idx][2]));
+ bonusScores={}; [...document.querySelectorAll('#bonusChecks input:checked')].forEach(el=>addTo(bonusScores,bonusOptions[+el.dataset.i][2]));
+ const totalTraits={...baseScores}; addTo(totalTraits,bonusScores);
+ const ranked=clubs.map(club=>{
+  let raw=0,possible=0; for(const[trait,weight]of Object.entries(club.profile)){const s=totalTraits[trait]||0;raw+=s*weight;possible+=weight;}
+  const avg=possible?raw/possible:0,breadth=Object.keys(club.profile).filter(t=>(totalTraits[t]||0)>=3).length;
+  return {...club,score:avg+breadth*.12};
+ }).sort((a,b)=>b.score-a.score);
+ const max=ranked[0].score||1;
+ ranked.forEach((r,i)=>{const relative=r.score/max;r.percent=Math.max(58,Math.min(96,Math.round(58+38*relative-i*1.7)));});
+ return {ranked,totalTraits};
+}
+function topTraits(totalTraits,n=3){return Object.entries(totalTraits).sort((a,b)=>b[1]-a[1]).slice(0,n).map(([k])=>k);}
+
+function personalize(club,totalTraits){
+ const overlap=Object.keys(club.profile).filter(t=>(totalTraits[t]||0)>0).sort((a,b)=>(totalTraits[b]||0)*club.profile[b]-(totalTraits[a]||0)*club.profile[a]).slice(0,2);
+ const phraseEn={
+ creative:"you seem to enjoy creating and expressing ideas",communication:"connecting and communicating with people matters to you",
+ publicSpeaking:"you want opportunities to use or strengthen your voice",leadership:"you are drawn to taking initiative and building leadership skills",
+ career:"you want your club experience to help prepare you for what comes next",language:"words, language, and communication catch your attention",
+ culture:"you are curious about people, perspectives, and cultures",critical:"you enjoy questioning ideas and thinking things through",
+ stem:"you are energized by scientific or mathematical problem-solving",data:"patterns, evidence, and working with information appeal to you",
+ digital:"technology and digital culture keep pulling your curiosity",service:"contributing to something meaningful matters to you",
+ environment:"you care about the world around you and responsible action",wellbeing:"health and wellbeing are meaningful interests for you",
+ community:"you want clubs to help you meet people and feel part of campus life",curiosity:"you genuinely like discovering things beyond your classes",
+ resilience:"you want to challenge yourself and grow in confidence"};
+ const phraseAr={
+ creative:"تميل إلى الإبداع والتعبير عن الأفكار",communication:"يهمك التواصل والتفاعل مع الآخرين",
+ publicSpeaking:"تبحث عن فرص لاستخدام صوتك وتنمية ثقتك في التحدث",leadership:"تميل إلى المبادرة وتنمية مهارات القيادة",
+ career:"تريد أن تساعدك تجربة النادي في الاستعداد لمستقبلك",language:"تجذبك اللغة والكلمات والتواصل",
+ culture:"لديك فضول تجاه الناس ووجهات النظر والثقافات",critical:"تستمتع بمناقشة الأفكار والتفكير فيها بعمق",
+ stem:"تستمتع بحل المشكلات العلمية أو الرياضية",data:"تجذبك الأنماط والأدلة والعمل مع المعلومات",
+ digital:"تثير التقنية والثقافة الرقمية فضولك",service:"تهمك المساهمة في شيء له معنى",
+ environment:"تهتم بالبيئة والعمل المسؤول",wellbeing:"الصحة والرفاه من اهتماماتك",
+ community:"تريد أن تساعدك الأندية على التعرف على الآخرين والشعور بالانتماء",curiosity:"تستمتع باكتشاف أشياء تتجاوز مقرراتك",
+ resilience:"تريد تحدي نفسك وتنمية ثقتك"};
+ const desc=lang==="en"?club.descEn:club.descAr, p=lang==="en"?phraseEn:phraseAr;
+ if(!overlap.length)return desc;
+ if(lang==="en") return overlap.length===1?`This rose to the top because ${p[overlap[0]]}. ${desc}`:`This rose to the top because ${p[overlap[0]]}, and ${p[overlap[1]]}. ${desc}`;
+ return overlap.length===1?`ظهر هذا النادي ضمن أفضل النتائج لأن ${p[overlap[0]]}. ${desc}`:`ظهر هذا النادي ضمن أفضل النتائج لأن ${p[overlap[0]]}، وكذلك ${p[overlap[1]]}. ${desc}`;
+}
+
+function showResults(){
+ const {ranked,totalTraits}=computeScores(),top3=ranked.slice(0,3),t=ui[lang];
+ const name=document.getElementById("name").value.trim(),hello=name?t.foundName(escapeHtml(name)):t.found,tt=topTraits(totalTraits,3);
+ document.getElementById("extras").classList.add("hidden");document.getElementById("quiz").classList.add("hidden");document.getElementById("results").classList.remove("hidden");
+ document.getElementById("resultsArea").innerHTML=`
+ <div class="results-head"><div class="spark">✨</div><h2>${hello}</h2><p>${t.resultIntro}</p>
+ <div class="trait-strip">${tt.map(k=>`<span class="pill">${traits[k][lang]}</span>`).join("")}</div></div>
+ ${top3.map((club,i)=>`<article class="match ${i===0?"top":""}"><div class="rank">${t.medals[i]}</div><div class="match-row">
+ <h3>${club[lang]}</h3><div class="pct">${club.percent}% ${t.match}</div></div><p class="why">${personalize(club,totalTraits)}</p>
+ <div class="tags">${(lang==="en"?club.tagsEn:club.tagsAr).map(x=>`<span class="tag">${x}</span>`).join("")}</div>
+ <a class="club-link" href="${MAIN_CLUBS_URL}" target="_blank" rel="noopener">${t.explore}</a></article>`).join("")}
+ <div class="footer-callout"><strong>${t.surprised}</strong><br>${t.footer}<div class="footer-actions">
+ <a href="${MAIN_CLUBS_URL}" target="_blank" rel="noopener"><button class="primary">${t.all}</button></a>
+ <button class="secondary" onclick="restart()">${t.retake}</button></div></div><div class="disclaimer">${t.disclaimer}</div>
+ <div class="creator-credit">${lang==="ar"
+   ? 'إعداد وتصميم الاختبار: أ. مرام الخضير · <a href="mailto:mkhodair@psu.edu.sa">mkhodair@psu.edu.sa</a>'
+   : 'Quiz created by Ms. Maram Alkhodair · <a href="mailto:mkhodair@psu.edu.sa">mkhodair@psu.edu.sa</a>'}</div>`;
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function restart(){answers=new Array(questions.length).fill(null);current=0;document.getElementById("results").classList.add("hidden");document.getElementById("intro").classList.remove("hidden");renderIntro();window.scrollTo({top:0,behavior:"smooth"});}
+function escapeHtml(str){return str.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
+renderIntro();
+</script>
+</body>
+</html>
